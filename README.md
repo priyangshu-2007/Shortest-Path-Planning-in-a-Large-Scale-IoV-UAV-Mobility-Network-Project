@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Shortest-path planning on a large road network (Dijkstra vs A*)
 
 Python does the preprocessing, experiment driving and analysis; C++ implements the algorithms.
@@ -53,3 +54,7 @@ Time per query is the mean per run, at least 5 runs and at least 50 ms in total.
 ./sp --graph processed/graph_1000.txt --queries processed/queries_1000.txt --mode d --out out.csv --paths paths.txt --reps 5
 ```
 `--mode d` distance, `t` travel time, `dyn` = `alpha*distance + beta*congestion` (`--alpha A --beta B --cong file`, one value per edge).
+=======
+# Shortest-Path-Planning-in-a-Large-Scale-IoV-UAV-Mobility-Network-Project
+Compares Dijkstra and A* shortest-path algorithms on a real New York road network (264K intersections, 365K roads), testing graph size, density, unreachable routes and changing traffic congestion. Both find identical optimal routes, while A* explores only about 27–53% of the vertices, making it better for large-scale route planning.
+>>>>>>> 9e1dd873c047bdd888d5eacb863e7607b94c7ad1
