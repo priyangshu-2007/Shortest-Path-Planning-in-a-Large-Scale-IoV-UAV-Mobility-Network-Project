@@ -165,13 +165,16 @@ def ratio(a, b):
 def fig_ratio():
     fig, ax = plt.subplots(1, 2, figsize=(11, 4))
     for k, (mode, name) in enumerate((("d", "distance weights"), ("t", "travel-time weights"))):
+        plotted_ratios = []
         for key, lab, mk in (("vertices", "vertices explored", "o"), ("edges", "edges examined", "s"),
                              ("time", "execution time", "^")):
-            ax[k].plot(SIZES, [ratio(agg[mode][n]["A*"][key], agg[mode][n]["Dijkstra"][key]) for n in SIZES],
-                       mk + "-", label=lab)
-        ax[k].set_xscale("log"); ax[k].set_ylim(0, 1.05); ax[k].axhline(1, color="gray", lw=.8, ls="--")
+            values = [ratio(agg[mode][n]["A*"][key], agg[mode][n]["Dijkstra"][key]) for n in SIZES]
+            plotted_ratios.extend(value for value in values if not math.isnan(value))
+            ax[k].plot(SIZES, values, mk + "-", label=lab)
+        top = max(plotted_ratios, default=0.0)
+        ax[k].set_xscale("log"); ax[k].set_ylim(0, max(1.1, top * 1.1)); ax[k].axhline(1, color="gray", lw=.8, ls="--")
         ax[k].set_xlabel("graph size (vertices)"); ax[k].set_ylabel("A* / Dijkstra")
-        ax[k].set_title(f"A* relative to Dijkstra ({name})"); ax[k].grid(True, alpha=.3)
+        ax[k].set_title(f"A* / Dijkstra ({name}; >1: A* slower)"); ax[k].grid(True, alpha=.3)
     ax[0].legend()
     savefig("fig_ratio.png")
 
@@ -235,6 +238,11 @@ def build_report(ver):
     tr = {n: d_[n]["A*"]["time"] / d_[n]["Dijkstra"]["time"] for n in SIZES}
     er = {n: d_[n]["A*"]["edges"] / d_[n]["Dijkstra"]["edges"] for n in SIZES}
     vr_t = {n: t_[n]["A*"]["vertices"] / t_[n]["Dijkstra"]["vertices"] for n in SIZES}
+    if max(tr.values()) < 1:
+        headline_time = (f"and takes {min(tr.values())*100:.0f}-{max(tr.values())*100:.0f}% of the time.")
+    else:
+        headline_time = (f"and its execution time ranges from {min(tr.values())*100:.0f}% to "
+                         f"{max(tr.values())*100:.0f}% of Dijkstra's (above 100% means A* is slower).")
     def slope(mode, a):
         x = np.log10(SIZES); y = np.log10([agg[mode][n][a]["time"] for n in SIZES])
         return float(np.polyfit(x, y, 1)[0])
@@ -264,8 +272,8 @@ def build_report(ver):
       f"comparisons** ({ver['cost_mismatch']} mismatches), and every returned path was re-checked edge by edge against "
       f"the graph ({ver['path_invalid']} invalid paths).")
     A(f"- **A\\* vs Dijkstra (distance weights, mean of 30 queries per size):** A\\* explores "
-      f"{min(vr.values())*100:.0f}-{max(vr.values())*100:.0f}% of the vertices Dijkstra explores, and takes "
-      f"{min(tr.values())*100:.0f}-{max(tr.values())*100:.0f}% of the time. On the full {fmt(FULL)}-vertex graph: "
+      f"{min(vr.values())*100:.0f}-{max(vr.values())*100:.0f}% of the vertices Dijkstra explores, {headline_time} "
+      f"On the full {fmt(FULL)}-vertex graph: "
       f"{d_[FULL]['Dijkstra']['time']:.1f} ms (Dijkstra) vs {d_[FULL]['A*']['time']:.1f} ms (A\\*).")
     A("- **Recommendation:** A\\* with a coordinate-based heuristic for point-to-point route planning (see Part F, Q10).\n")
 
@@ -431,13 +439,21 @@ def build_report(ver):
       f"With travel-time weights A\\* explores {min(vr_t[n] for n in SIZES[:4])*100:.0f}-{max(vr_t[n] for n in SIZES[:4])*100:.0f}% of Dijkstra's vertices up to 25,000 vertices "
       f"but {min(vr_t[n] for n in SIZES[4:])*100:.0f}-{max(vr_t[n] for n in SIZES[4:])*100:.0f}% from 50,000 vertices upward, so its benefit relative to distance weights is not uniform; "
       "it depends on the region and on the heuristic scale.\n")
+    if max(tr.values()) < 1:
+        q5_comparison = (f"A\\* is faster at every size, but the time saving (about {(1-tr[FULL])*100:.0f}% at full size) "
+                         f"is smaller than the vertex saving ({(1-vr[FULL])*100:.0f}%), plausibly because each A\\* vertex "
+                         "also costs a haversine evaluation.")
+    else:
+        q5_comparison = (f"A\\* explores fewer vertices at every size, but its execution time is {tr[FULL]*100:.0f}% of "
+                         f"Dijkstra's at full size (ratios range from {min(tr.values())*100:.0f}% to "
+                         f"{max(tr.values())*100:.0f}% across sizes), plausibly because each A\\* vertex also costs a "
+                         "haversine evaluation (sin, asin, sqrt) that cancels out the saving in vertices on this machine.")
     A(f"**Q5. How does execution time vary with graph size?** Dijkstra grows from {d_[1000]['Dijkstra']['time']:.3f} ms (1,000 vertices) to "
       f"{d_[FULL]['Dijkstra']['time']:.1f} ms ({fmt(FULL)} vertices); A\\* from {d_[1000]['A*']['time']:.3f} ms to {d_[FULL]['A*']['time']:.1f} ms. "
       f"A log-log fit gives slopes of {sD:.2f} (Dijkstra) and {sA:.2f} (A\\*): time grows somewhat faster than the number of vertices. "
       f"With random endpoints the typical source-destination distance grows with the graph, so the explored region grows about in proportion to V "
       f"({fmt(d_[1000]['Dijkstra']['vertices'])} to {fmt(d_[FULL]['Dijkstra']['vertices'])} vertices for Dijkstra); the extra growth comes from the log factor of the heap "
-      "and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). A\\* is faster at every size, but the time saving "
-      f"(about {(1-tr[FULL])*100:.0f}% at full size) is smaller than the vertex saving ({(1-vr[FULL])*100:.0f}%), plausibly because each A\\* vertex also costs a haversine evaluation.\n")
+      f"and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). {q5_comparison}\n")
     base, hi = dt[0], dt[-1]
     A(f"**Q6. Effect of graph density.** Real road networks are sparse (average degree 2.6-2.8), so E = O(V) and the (V+E) log V bound is dominated by "
       f"V log V. To isolate density, I added synthetic *local* shortcut edges (endpoints a few hops apart, weight about 10x great-circle length, like real edges) "
@@ -463,11 +479,20 @@ def build_report(ver):
       "would otherwise dominate small queries, so version stamps are used. (8) Building very dense variants with purely local edges saturates "
       "(a degree-20 variant could not be generated), so the density experiment stops at degree 12. (9) Sub-millisecond timings are noisy, so each query is "
       "repeated until at least 50 ms have elapsed (and at least 5 runs) and the mean per run is used.\n")
-    A(f"**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\\*** for point-to-point queries: identical optimal routes, about "
-      f"{(1-max(vr.values()))*100:.0f}-{(1-min(vr.values()))*100:.0f}% fewer vertices and {(1-max(tr.values()))*100:.0f}-{(1-min(tr.values()))*100:.0f}% less time here, with no preprocessing "
+    if max(tr.values()) < 1:
+        q10_performance = (f"about {(1-max(vr.values()))*100:.0f}-{(1-min(vr.values()))*100:.0f}% fewer vertices and "
+                           f"{(1-max(tr.values()))*100:.0f}-{(1-min(tr.values()))*100:.0f}% less time here")
+    else:
+        q10_performance = (f"about {(1-max(vr.values()))*100:.0f}-{(1-min(vr.values()))*100:.0f}% fewer vertices and "
+                           f"{(1-max(er.values()))*100:.0f}-{(1-min(er.values()))*100:.0f}% fewer edges, "
+                           f"while execution time is mixed on this machine (A*/Dijkstra time ratio from "
+                           f"{min(tr.values()):.2f} to {max(tr.values()):.2f})")
+    A(f"**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\\*** for point-to-point queries: identical optimal routes, "
+      f"{q10_performance}, with no preprocessing "
       "other than one pass to compute `c`, and it adapts to changing edge costs as long as h stays a lower bound (see the bonus). "
       "Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the "
-      "heuristic's assumption. For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or "
+      "heuristic's assumption. A\\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. "
+      "For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or "
       "hierarchical methods such as contraction hierarchies, since plain A\\* still visits tens of thousands of vertices on a city-scale graph.\n")
 
     # ---------------- Bonus
