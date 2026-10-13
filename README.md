@@ -1,0 +1,2 @@
+# Shortest-Path-Planning-in-a-Large-Scale-IoV-UAV-Mobility-Network-Project
+Compares Dijkstra and A* shortest-path algorithms on a real New York road network (264K intersections, 365K roads), testing graph size, density, unreachable routes and changing traffic congestion. Both find identical optimal routes, while A* explores only about 27–53% of the vertices, making it better for large-scale route planning.
