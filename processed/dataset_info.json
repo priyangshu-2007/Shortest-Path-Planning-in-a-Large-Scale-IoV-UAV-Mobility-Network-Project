@@ -1,0 +1,133 @@
+{
+  "seed": 42,
+  "coordinate_records": 264346,
+  "lon_range": [
+    -74.499998,
+    -73.500016
+  ],
+  "lat_range": [
+    40.300009,
+    41.299997
+  ],
+  "distance_file": {
+    "arc_records": 733846,
+    "self_loops": 0,
+    "parallel_arcs": 3746,
+    "asymmetric_pairs": 0,
+    "undirected_edges": 365050
+  },
+  "time_file": {
+    "arc_records": 733846,
+    "self_loops": 0,
+    "parallel_arcs": 3746,
+    "asymmetric_pairs": 0,
+    "undirected_edges": 365050
+  },
+  "weight_distance": {
+    "min": 1,
+    "max": 36946,
+    "mean": 1293.2497548281058,
+    "median": 951
+  },
+  "weight_time": {
+    "min": 2,
+    "max": 92366,
+    "mean": 3126.5094343240653,
+    "median": 2333
+  },
+  "components": 1,
+  "largest_component": 264346,
+  "isolated_vertices": 0,
+  "full_graph_stats": {
+    "V": 264346,
+    "E": 365050,
+    "avg_degree": 2.7619,
+    "max_degree": 8
+  },
+  "bfs_start_vertex_original_id": 58370,
+  "subgraphs": {
+    "1000": {
+      "V": 1000,
+      "E": 1276,
+      "avg_degree": 2.552,
+      "max_degree": 6
+    },
+    "5000": {
+      "V": 5000,
+      "E": 6565,
+      "avg_degree": 2.626,
+      "max_degree": 6
+    },
+    "10000": {
+      "V": 10000,
+      "E": 12902,
+      "avg_degree": 2.5804,
+      "max_degree": 6
+    },
+    "25000": {
+      "V": 25000,
+      "E": 32924,
+      "avg_degree": 2.6339,
+      "max_degree": 6
+    },
+    "50000": {
+      "V": 50000,
+      "E": 66783,
+      "avg_degree": 2.6713,
+      "max_degree": 6
+    },
+    "100000": {
+      "V": 100000,
+      "E": 134763,
+      "avg_degree": 2.6953,
+      "max_degree": 6
+    },
+    "264346": {
+      "V": 264346,
+      "E": 365050,
+      "avg_degree": 2.7619,
+      "max_degree": 8
+    }
+  },
+  "density_variants": {
+    "4": {
+      "V": 10000,
+      "E": 20000,
+      "avg_degree": 4.0,
+      "max_degree": 11
+    },
+    "6": {
+      "V": 10000,
+      "E": 30000,
+      "avg_degree": 6.0,
+      "max_degree": 16
+    },
+    "8": {
+      "V": 10000,
+      "E": 40000,
+      "avg_degree": 8.0,
+      "max_degree": 20
+    },
+    "12": {
+      "V": 10000,
+      "E": 60000,
+      "avg_degree": 12.0,
+      "max_degree": 27
+    }
+  },
+  "disconnected_test": {
+    "vertices": 1003,
+    "edges": 1277,
+    "note": "1000-vertex subgraph + 2-vertex component + 1 isolated vertex"
+  },
+  "sizes": [
+    1000,
+    5000,
+    10000,
+    25000,
+    50000,
+    100000,
+    264346
+  ],
+  "pairs_per_size": 30
+}
