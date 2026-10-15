@@ -4,7 +4,7 @@
 ## Headline results
 - **Graph:** 264,346 vertices, 365,050 undirected weighted edges (real road distances), average degree 2.76, maximum degree 8, one connected component.
 - **Correctness:** Dijkstra and A\* returned the **same optimal cost in all 420 (query, size, weight-model) comparisons** (0 mismatches), and every returned path was re-checked edge by edge against the graph (0 invalid paths).
-- **A\* vs Dijkstra (distance weights, mean of 30 queries per size):** A\* explores 27-53% of the vertices Dijkstra explores, and its execution time ranges from 90% to 190% of Dijkstra's (above 100% means A* is slower). On the full 264,346-vertex graph: 44.2 ms (Dijkstra) vs 49.0 ms (A\*).
+- **A\* vs Dijkstra (distance weights, mean of 30 queries per size):** A\* explores 27-53% of the vertices Dijkstra explores, and its execution time ranges from 77% to 171% of Dijkstra's (above 100% means A* is slower). On the full 264,346-vertex graph: 37.1 ms (Dijkstra) vs 39.8 ms (A\*).
 - **Recommendation:** A\* with a coordinate-based heuristic for point-to-point route planning (see Part F, Q10).
 
 ## Part A: Dataset selection
@@ -55,7 +55,7 @@ Implemented from scratch in `Algorithms.cpp`: adjacency list `vector<vector<Edge
 | Hops (edges on the path) | 26 | 26 |
 | Vertices explored | 944 | 284 |
 | Edges examined | 2,438 | 776 |
-| Execution time (ms, mean per run) | 0.0617 | 0.0940 |
+| Execution time (ms, mean per run) | 0.0927 | 0.1328 |
 
 **Complete shortest path (original DIMACS vertex ids), Dijkstra:**
 
@@ -82,39 +82,39 @@ Each graph size uses **30 random source-destination pairs** (fixed seed); each q
 
 | Graph size | Algorithm | Avg shortest-path cost | Avg vertices explored | Avg edges examined | Avg execution time (ms) |
 |---|---|---|---|---|---|
-| 1,000 | Dijkstra | 40,557 | 602 | 1,575 | 0.245 |
-|  | A* | 40,557 | 181 | 489 | 0.464 |
-| 5,000 | Dijkstra | 77,624 | 2,555 | 6,838 | 0.484 |
-|  | A* | 77,624 | 717 | 1,959 | 0.463 |
-| 10,000 | Dijkstra | 100,238 | 4,466 | 11,732 | 0.776 |
-|  | A* | 100,238 | 1,212 | 3,303 | 0.702 |
-| 25,000 | Dijkstra | 166,194 | 12,025 | 31,853 | 3.046 |
-|  | A* | 166,194 | 6,365 | 16,931 | 4.634 |
-| 50,000 | Dijkstra | 213,462 | 21,230 | 57,379 | 6.152 |
-|  | A* | 213,462 | 9,562 | 26,044 | 7.710 |
-| 100,000 | Dijkstra | 344,072 | 58,349 | 159,557 | 16.150 |
-|  | A* | 344,072 | 27,306 | 75,646 | 20.199 |
-| 264,346 | Dijkstra | 557,399 | 140,744 | 397,649 | 44.203 |
-|  | A* | 557,399 | 65,442 | 188,507 | 49.023 |
+| 1,000 | Dijkstra | 40,557 | 602 | 1,575 | 0.041 |
+|  | A* | 40,557 | 181 | 489 | 0.070 |
+| 5,000 | Dijkstra | 77,624 | 2,555 | 6,838 | 0.388 |
+|  | A* | 77,624 | 717 | 1,959 | 0.348 |
+| 10,000 | Dijkstra | 100,238 | 4,466 | 11,732 | 0.735 |
+|  | A* | 100,238 | 1,212 | 3,303 | 0.563 |
+| 25,000 | Dijkstra | 166,194 | 12,025 | 31,853 | 2.262 |
+|  | A* | 166,194 | 6,365 | 16,931 | 3.134 |
+| 50,000 | Dijkstra | 213,462 | 21,230 | 57,379 | 4.482 |
+|  | A* | 213,462 | 9,562 | 26,044 | 5.045 |
+| 100,000 | Dijkstra | 344,072 | 58,349 | 159,557 | 12.193 |
+|  | A* | 344,072 | 27,306 | 75,646 | 13.801 |
+| 264,346 | Dijkstra | 557,399 | 140,744 | 397,649 | 37.115 |
+|  | A* | 557,399 | 65,442 | 188,507 | 39.793 |
 
 ### Secondary: travel-time weights
 
 | Graph size | Algorithm | Avg shortest-path cost | Avg vertices explored | Avg edges examined | Avg execution time (ms) |
 |---|---|---|---|---|---|
-| 1,000 | Dijkstra | 92,050 | 596 | 1,558 | 0.058 |
-|  | A* | 92,050 | 344 | 922 | 0.177 |
-| 5,000 | Dijkstra | 177,139 | 2,532 | 6,770 | 0.414 |
-|  | A* | 177,139 | 1,682 | 4,554 | 0.813 |
-| 10,000 | Dijkstra | 217,850 | 4,477 | 11,767 | 0.858 |
-|  | A* | 217,850 | 2,838 | 7,534 | 1.558 |
-| 25,000 | Dijkstra | 310,906 | 11,345 | 30,094 | 2.881 |
-|  | A* | 310,906 | 7,215 | 19,226 | 4.633 |
-| 50,000 | Dijkstra | 335,127 | 20,058 | 54,455 | 5.763 |
-|  | A* | 335,127 | 8,391 | 22,886 | 6.706 |
-| 100,000 | Dijkstra | 474,785 | 57,576 | 158,145 | 21.190 |
-|  | A* | 474,785 | 20,242 | 56,713 | 18.008 |
-| 264,346 | Dijkstra | 749,853 | 144,596 | 409,324 | 48.543 |
-|  | A* | 749,853 | 57,687 | 167,194 | 49.508 |
+| 1,000 | Dijkstra | 92,050 | 596 | 1,558 | 0.047 |
+|  | A* | 92,050 | 344 | 922 | 0.154 |
+| 5,000 | Dijkstra | 177,139 | 2,532 | 6,770 | 0.392 |
+|  | A* | 177,139 | 1,682 | 4,554 | 0.880 |
+| 10,000 | Dijkstra | 217,850 | 4,477 | 11,767 | 0.792 |
+|  | A* | 217,850 | 2,838 | 7,534 | 1.459 |
+| 25,000 | Dijkstra | 310,906 | 11,345 | 30,094 | 2.202 |
+|  | A* | 310,906 | 7,215 | 19,226 | 4.122 |
+| 50,000 | Dijkstra | 335,127 | 20,058 | 54,455 | 3.591 |
+|  | A* | 335,127 | 8,391 | 22,886 | 4.084 |
+| 100,000 | Dijkstra | 474,785 | 57,576 | 158,145 | 13.411 |
+|  | A* | 474,785 | 20,242 | 56,713 | 12.325 |
+| 264,346 | Dijkstra | 749,853 | 144,596 | 409,324 | 42.279 |
+|  | A* | 749,853 | 57,687 | 167,194 | 38.700 |
 
 ![Main comparison](fig_main.png)
 
@@ -143,16 +143,16 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 | Avg degree | Edges | Algorithm | Avg vertices explored | Avg edges examined | Avg time (ms) |
 |---|---|---|---|---|---|
-| 2.58 | 12,902 | Dijkstra | 4,466 | 11,732 | 0.979 |
-|  |  | A* | 1,212 | 3,303 | 0.841 |
-| 4.00 | 20,000 | Dijkstra | 4,453 | 18,089 | 1.015 |
-|  |  | A* | 1,105 | 4,639 | 0.770 |
-| 6.00 | 30,000 | Dijkstra | 4,406 | 26,813 | 1.509 |
-|  |  | A* | 931 | 5,880 | 0.819 |
-| 8.00 | 40,000 | Dijkstra | 4,380 | 35,597 | 2.133 |
-|  |  | A* | 826 | 6,983 | 1.129 |
-| 12.00 | 60,000 | Dijkstra | 4,418 | 53,895 | 3.041 |
-|  |  | A* | 755 | 9,601 | 1.439 |
+| 2.58 | 12,902 | Dijkstra | 4,466 | 11,732 | 0.669 |
+|  |  | A* | 1,212 | 3,303 | 0.546 |
+| 4.00 | 20,000 | Dijkstra | 4,453 | 18,089 | 1.125 |
+|  |  | A* | 1,105 | 4,639 | 0.853 |
+| 6.00 | 30,000 | Dijkstra | 4,406 | 26,813 | 0.916 |
+|  |  | A* | 931 | 5,880 | 0.491 |
+| 8.00 | 40,000 | Dijkstra | 4,380 | 35,597 | 1.178 |
+|  |  | A* | 826 | 6,983 | 0.545 |
+| 12.00 | 60,000 | Dijkstra | 4,418 | 53,895 | 1.345 |
+|  |  | A* | 755 | 9,601 | 0.589 |
 
 ![Density experiment](fig_density.png)
 
@@ -165,9 +165,9 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 **Q4. Which explores fewer vertices, and why?** A\*: 27-53% of Dijkstra's vertices (distance weights; 35-66% for travel time). Dijkstra expands every vertex whose distance from the source is below the answer, i.e. a disc around S. A\* adds h(v) to the priority, so vertices pointing away from D are postponed and the search stretches toward D. The saving is smaller than the ideal because the heuristic is a straight-line bound scaled by the *minimum* weight/length ratio (9.64 on small graphs, 7.15 on the larger ones), while typical edges have a ratio near 10, so h underestimates the remaining cost. The saving shrinks from about 73% fewer vertices at 10,000 vertices to 47% at 25,000, which coincides with the drop of `c` (a plausible cause, though graph size changes at the same time). With travel-time weights A\* explores 58-66% of Dijkstra's vertices up to 25,000 vertices but 35-42% from 50,000 vertices upward, so its benefit relative to distance weights is not uniform; it depends on the region and on the heuristic scale.
 
-**Q5. How does execution time vary with graph size?** Dijkstra grows from 0.245 ms (1,000 vertices) to 44.2 ms (264,346 vertices); A\* from 0.464 ms to 49.0 ms. A log-log fit gives slopes of 0.99 (Dijkstra) and 0.95 (A\*): time grows somewhat faster than the number of vertices. With random endpoints the typical source-destination distance grows with the graph, so the explored region grows about in proportion to V (602 to 140,744 vertices for Dijkstra); the extra growth comes from the log factor of the heap and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). A\* explores fewer vertices at every size, but its execution time is 111% of Dijkstra's at full size (ratios range from 90% to 190% across sizes), plausibly because each A\* vertex also costs a haversine evaluation (sin, asin, sqrt) that cancels out the saving in vertices on this machine.
+**Q5. How does execution time vary with graph size?** Dijkstra grows from 0.041 ms (1,000 vertices) to 37.1 ms (264,346 vertices); A\* from 0.070 ms to 39.8 ms. A log-log fit gives slopes of 1.20 (Dijkstra) and 1.17 (A\*): time grows somewhat faster than the number of vertices. With random endpoints the typical source-destination distance grows with the graph, so the explored region grows about in proportion to V (602 to 140,744 vertices for Dijkstra); the extra growth comes from the log factor of the heap and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). A\* explores fewer vertices at every size, but its execution time is 107% of Dijkstra's at full size (ratios range from 77% to 171% across sizes), plausibly because each A\* vertex also costs a haversine evaluation (sin, asin, sqrt) that cancels out the saving in vertices on this machine.
 
-**Q6. Effect of graph density.** Real road networks are sparse (average degree 2.6-2.8), so E = O(V) and the (V+E) log V bound is dominated by V log V. To isolate density, I added synthetic *local* shortcut edges (endpoints a few hops apart, weight about 10x great-circle length, like real edges) to the 10,000-vertex graph, raising the average degree from 2.58 to 12. Edges examined by Dijkstra rose from 11,732 to 53,895 (4.6x) and its time from 0.98 to 3.04 ms (3.1x), while vertices explored stayed nearly constant (4,466 to 4,418). So density affects the cost mainly through the number of edge relaxations (and heap pushes), roughly proportionally to degree; A\* shows the same pattern (3,303 to 9,601 edges) but from a much lower base. Caveat: the added edges are synthetic and slightly shorten routes (average cost falls from 100,238 to 86,257).
+**Q6. Effect of graph density.** Real road networks are sparse (average degree 2.6-2.8), so E = O(V) and the (V+E) log V bound is dominated by V log V. To isolate density, I added synthetic *local* shortcut edges (endpoints a few hops apart, weight about 10x great-circle length, like real edges) to the 10,000-vertex graph, raising the average degree from 2.58 to 12. Edges examined by Dijkstra rose from 11,732 to 53,895 (4.6x) and its time from 0.67 to 1.34 ms (2.0x), while vertices explored stayed nearly constant (4,466 to 4,418). So density affects the cost mainly through the number of edge relaxations (and heap pushes), roughly proportionally to degree; A\* shows the same pattern (3,303 to 9,601 edges) but from a much lower base. Caveat: the added edges are synthetic and slightly shorten routes (average cost falls from 100,238 to 86,257).
 
 **Q7. Theoretical time complexity of the Dijkstra implementation.** O((V + E) log V) with a binary heap and lazy deletion (at most E heap entries; each operation O(log E) = O(log V)); O(V log V) on sparse road graphs where E = O(V). Space O(V + E).
 
@@ -175,7 +175,7 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 **Q9. Difficulties converting the dataset.** (1) The `.gr` files are *directed arcs*; I had to verify symmetry (0 exceptions) and merge pairs into undirected edges. (2) 3,746 repeated arcs between the same intersections needed a merge rule (keep the minimum). (3) The weight unit is undocumented; I measured weight/great-circle ratios (about 10) to design a valid heuristic. A raw haversine in metres would still be admissible but far too weak, and a naive 'weight = metres' assumption would have been wrong. (4) Coordinates are integer micro-degrees. (5) Subgraphs must be connected and comparable: BFS prefixes give nested connected graphs, but boundary effects lower their average degree. (6) A single outlier edge can reduce the global scale `c` (it fell from 9.6 to 7.2), weakening A\* on larger graphs. (7) Per-query array initialisation would otherwise dominate small queries, so version stamps are used. (8) Building very dense variants with purely local edges saturates (a degree-20 variant could not be generated), so the density experiment stops at degree 12. (9) Sub-millisecond timings are noisy, so each query is repeated until at least 50 ms have elapsed (and at least 5 runs) and the mean per run is used.
 
-**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\*** for point-to-point queries: identical optimal routes, about 47-73% fewer vertices and 47-72% fewer edges, while execution time is mixed on this machine (A*/Dijkstra time ratio from 0.90 to 1.90), with no preprocessing other than one pass to compute `c`. Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the heuristic's assumption. A\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or hierarchical methods such as contraction hierarchies, since plain A\* still visits tens of thousands of vertices on a city-scale graph.
+**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\*** for point-to-point queries: identical optimal routes, about 47-73% fewer vertices and 47-72% fewer edges, while execution time is mixed on this machine (A*/Dijkstra time ratio from 0.77 to 1.71), with no preprocessing other than one pass to compute `c`. Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the heuristic's assumption. A\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or hierarchical methods such as contraction hierarchies, since plain A\* still visits tens of thousands of vertices on a city-scale graph.
 
 ## Reproducibility
 `./run_all.sh` runs: `Preprocessing.py` (graph files) -> `g++ -O2 Algorithms.cpp` -> `experiments.py` (all runs) -> `Analysis.py` (this report). Seeds are fixed (42); timings vary slightly between machines, all other numbers are deterministic.

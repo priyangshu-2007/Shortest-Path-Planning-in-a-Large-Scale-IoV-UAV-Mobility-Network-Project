@@ -6,7 +6,7 @@
    "E": 1276,
    "avg_degree": 2.552,
    "max_degree": 6,
-   "build_ms": 1.0,
+   "build_ms": 7.85,
    "heuristic_scale": 9.640971
   },
   "size_1000_t": {
@@ -14,7 +14,7 @@
    "E": 1276,
    "avg_degree": 2.552,
    "max_degree": 6,
-   "build_ms": 0.0,
+   "build_ms": 0.7,
    "heuristic_scale": 12.482209
   },
   "size_5000_d": {
@@ -22,7 +22,7 @@
    "E": 6565,
    "avg_degree": 2.626,
    "max_degree": 6,
-   "build_ms": 0.0,
+   "build_ms": 2.98,
    "heuristic_scale": 9.640971
   },
   "size_5000_t": {
@@ -30,7 +30,7 @@
    "E": 6565,
    "avg_degree": 2.626,
    "max_degree": 6,
-   "build_ms": 0.0,
+   "build_ms": 1.2,
    "heuristic_scale": 9.967371
   },
   "size_10000_d": {
@@ -46,7 +46,7 @@
    "E": 12902,
    "avg_degree": 2.5804,
    "max_degree": 6,
-   "build_ms": 0.0,
+   "build_ms": 4.93,
    "heuristic_scale": 9.965693
   },
   "size_25000_d": {
@@ -54,7 +54,7 @@
    "E": 32924,
    "avg_degree": 2.6339,
    "max_degree": 6,
-   "build_ms": 7.22,
+   "build_ms": 6.84,
    "heuristic_scale": 7.15921
   },
   "size_25000_t": {
@@ -62,7 +62,7 @@
    "E": 32924,
    "avg_degree": 2.6339,
    "max_degree": 6,
-   "build_ms": 7.64,
+   "build_ms": 6.82,
    "heuristic_scale": 9.918518
   },
   "size_50000_d": {
@@ -70,7 +70,7 @@
    "E": 66783,
    "avg_degree": 2.6713,
    "max_degree": 6,
-   "build_ms": 18.04,
+   "build_ms": 13.54,
    "heuristic_scale": 7.15921
   },
   "size_50000_t": {
@@ -78,7 +78,7 @@
    "E": 66783,
    "avg_degree": 2.6713,
    "max_degree": 6,
-   "build_ms": 15.92,
+   "build_ms": 13.81,
    "heuristic_scale": 9.90683
   },
   "size_100000_d": {
@@ -86,7 +86,7 @@
    "E": 134763,
    "avg_degree": 2.6953,
    "max_degree": 6,
-   "build_ms": 15.34,
+   "build_ms": 31.47,
    "heuristic_scale": 7.152478
   },
   "size_100000_t": {
@@ -94,7 +94,7 @@
    "E": 134763,
    "avg_degree": 2.6953,
    "max_degree": 6,
-   "build_ms": 28.98,
+   "build_ms": 24.41,
    "heuristic_scale": 9.899037
   },
   "size_264346_d": {
@@ -102,7 +102,7 @@
    "E": 365050,
    "avg_degree": 2.7619,
    "max_degree": 8,
-   "build_ms": 68.46,
+   "build_ms": 44.58,
    "heuristic_scale": 7.152478
   },
   "size_264346_t": {
@@ -110,7 +110,7 @@
    "E": 365050,
    "avg_degree": 2.7619,
    "max_degree": 8,
-   "build_ms": 89.15,
+   "build_ms": 44.71,
    "heuristic_scale": 9.656193
   }
  },
@@ -120,7 +120,7 @@
    "E": 12902,
    "avg_degree": 2.5804,
    "max_degree": 6,
-   "build_ms": 6.84,
+   "build_ms": 0.0,
    "heuristic_scale": 9.474701
   },
   "4": {
@@ -128,7 +128,7 @@
    "E": 20000,
    "avg_degree": 4.0,
    "max_degree": 11,
-   "build_ms": 0.0,
+   "build_ms": 15.67,
    "heuristic_scale": 9.474701
   },
   "6": {
@@ -144,7 +144,7 @@
    "E": 40000,
    "avg_degree": 8.0,
    "max_degree": 20,
-   "build_ms": 8.52,
+   "build_ms": 4.63,
    "heuristic_scale": 9.474701
   },
   "12": {
@@ -152,7 +152,7 @@
    "E": 60000,
    "avg_degree": 12.0,
    "max_degree": 27,
-   "build_ms": 10.03,
+   "build_ms": 14.76,
    "heuristic_scale": 9.474701
   }
  },
