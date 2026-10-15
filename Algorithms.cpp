@@ -1,12 +1,10 @@
-// Algorithms.cpp  --  Parts C and D (+ bonus): Dijkstra and A* on a weighted undirected graph.
+// Algorithms.cpp  --  Parts C and D: Dijkstra and A* on a weighted undirected graph.
 //
 // Build :  g++ -O2 -std=c++17 -o Algorithms Algorithms.cpp
 // Run   :  ./Algorithms --graph processed/graph_1000.txt --queries processed/queries_1000.txt
 //               --mode d --out results/out.csv --paths results/out_paths.txt [--reps 5]
 //          --mode d    : weight = distance
 //          --mode t    : weight = travel time
-//          --mode dyn  : weight = alpha*distance + beta*congestion[edge]
-//                        (needs --alpha A --beta B --cong congestion_file)
 //
 // No graph library / built-in shortest-path routine is used: the graph is a plain
 // adjacency list (vector<vector<Edge>>), Dijkstra uses std::priority_queue as a min-heap,
@@ -182,8 +180,7 @@ static Result astar(const Graph& G, Work& W, int s, int d, double scale) {
 
 // ---------------------------------------------------------------- main
 int main(int argc, char** argv) {
-    string graphPath, queryPath, mode = "d", outCsv = "out.csv", outPaths = "paths.txt", congPath;
-    double alpha = 1.0, beta = 1.0;
+    string graphPath, queryPath, mode = "d", outCsv = "out.csv", outPaths = "paths.txt";
     int reps = 5;
     for (int i = 1; i + 1 < argc; i += 2) {
         string k = argv[i], v = argv[i + 1];
@@ -192,9 +189,6 @@ int main(int argc, char** argv) {
         else if (k == "--mode") mode = v;
         else if (k == "--out") outCsv = v;
         else if (k == "--paths") outPaths = v;
-        else if (k == "--alpha") alpha = atof(v.c_str());
-        else if (k == "--beta") beta = atof(v.c_str());
-        else if (k == "--cong") congPath = v;
         else if (k == "--reps") reps = atoi(v.c_str());
         else { cerr << "unknown option " << k << "\n"; return 1; }
     }
@@ -205,14 +199,7 @@ int main(int argc, char** argv) {
     vector<double> w(G.m);
     if (mode == "d") w = G.wd;
     else if (mode == "t") w = G.wt;
-    else if (mode == "dyn") {
-        ifstream cin2(congPath);
-        if (!cin2) { cerr << "need --cong file for --mode dyn\n"; return 1; }
-        for (long long k = 0; k < G.m; k++) {
-            double c; cin2 >> c;
-            w[k] = alpha * G.wd[k] + beta * c;          // w = alpha*d + beta*c
-        }
-    } else { cerr << "bad mode\n"; return 1; }
+    else { cerr << "bad mode\n"; return 1; }
 
     // ---- Part B: build adjacency list and report its statistics
     auto t0 = chrono::steady_clock::now();

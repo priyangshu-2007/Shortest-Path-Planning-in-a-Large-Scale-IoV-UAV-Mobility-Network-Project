@@ -4,7 +4,7 @@
 ## Headline results
 - **Graph:** 264,346 vertices, 365,050 undirected weighted edges (real road distances), average degree 2.76, maximum degree 8, one connected component.
 - **Correctness:** Dijkstra and A\* returned the **same optimal cost in all 420 (query, size, weight-model) comparisons** (0 mismatches), and every returned path was re-checked edge by edge against the graph (0 invalid paths).
-- **A\* vs Dijkstra (distance weights, mean of 30 queries per size):** A\* explores 27-53% of the vertices Dijkstra explores, and its execution time ranges from 79% to 209% of Dijkstra's (above 100% means A* is slower). On the full 264,346-vertex graph: 95.3 ms (Dijkstra) vs 96.7 ms (A\*).
+- **A\* vs Dijkstra (distance weights, mean of 30 queries per size):** A\* explores 27-53% of the vertices Dijkstra explores, and its execution time ranges from 90% to 190% of Dijkstra's (above 100% means A* is slower). On the full 264,346-vertex graph: 44.2 ms (Dijkstra) vs 49.0 ms (A\*).
 - **Recommendation:** A\* with a coordinate-based heuristic for point-to-point route planning (see Part F, Q10).
 
 ## Part A: Dataset selection
@@ -55,7 +55,7 @@ Implemented from scratch in `Algorithms.cpp`: adjacency list `vector<vector<Edge
 | Hops (edges on the path) | 26 | 26 |
 | Vertices explored | 944 | 284 |
 | Edges examined | 2,438 | 776 |
-| Execution time (ms, mean per run) | 0.1341 | 0.0996 |
+| Execution time (ms, mean per run) | 0.0617 | 0.0940 |
 
 **Complete shortest path (original DIMACS vertex ids), Dijkstra:**
 
@@ -82,39 +82,39 @@ Each graph size uses **30 random source-destination pairs** (fixed seed); each q
 
 | Graph size | Algorithm | Avg shortest-path cost | Avg vertices explored | Avg edges examined | Avg execution time (ms) |
 |---|---|---|---|---|---|
-| 1,000 | Dijkstra | 40,557 | 602 | 1,575 | 0.065 |
-|  | A* | 40,557 | 181 | 489 | 0.137 |
-| 5,000 | Dijkstra | 77,624 | 2,555 | 6,838 | 0.755 |
-|  | A* | 77,624 | 717 | 1,959 | 0.748 |
-| 10,000 | Dijkstra | 100,238 | 4,466 | 11,732 | 1.484 |
-|  | A* | 100,238 | 1,212 | 3,303 | 1.177 |
-| 25,000 | Dijkstra | 166,194 | 12,025 | 31,853 | 11.056 |
-|  | A* | 166,194 | 6,365 | 16,931 | 17.462 |
-| 50,000 | Dijkstra | 213,462 | 21,230 | 57,379 | 5.912 |
-|  | A* | 213,462 | 9,562 | 26,044 | 7.505 |
-| 100,000 | Dijkstra | 344,072 | 58,349 | 159,557 | 14.605 |
-|  | A* | 344,072 | 27,306 | 75,646 | 17.978 |
-| 264,346 | Dijkstra | 557,399 | 140,744 | 397,649 | 95.285 |
-|  | A* | 557,399 | 65,442 | 188,507 | 96.676 |
+| 1,000 | Dijkstra | 40,557 | 602 | 1,575 | 0.245 |
+|  | A* | 40,557 | 181 | 489 | 0.464 |
+| 5,000 | Dijkstra | 77,624 | 2,555 | 6,838 | 0.484 |
+|  | A* | 77,624 | 717 | 1,959 | 0.463 |
+| 10,000 | Dijkstra | 100,238 | 4,466 | 11,732 | 0.776 |
+|  | A* | 100,238 | 1,212 | 3,303 | 0.702 |
+| 25,000 | Dijkstra | 166,194 | 12,025 | 31,853 | 3.046 |
+|  | A* | 166,194 | 6,365 | 16,931 | 4.634 |
+| 50,000 | Dijkstra | 213,462 | 21,230 | 57,379 | 6.152 |
+|  | A* | 213,462 | 9,562 | 26,044 | 7.710 |
+| 100,000 | Dijkstra | 344,072 | 58,349 | 159,557 | 16.150 |
+|  | A* | 344,072 | 27,306 | 75,646 | 20.199 |
+| 264,346 | Dijkstra | 557,399 | 140,744 | 397,649 | 44.203 |
+|  | A* | 557,399 | 65,442 | 188,507 | 49.023 |
 
 ### Secondary: travel-time weights
 
 | Graph size | Algorithm | Avg shortest-path cost | Avg vertices explored | Avg edges examined | Avg execution time (ms) |
 |---|---|---|---|---|---|
-| 1,000 | Dijkstra | 92,050 | 596 | 1,558 | 0.092 |
-|  | A* | 92,050 | 344 | 922 | 0.287 |
-| 5,000 | Dijkstra | 177,139 | 2,532 | 6,770 | 0.645 |
-|  | A* | 177,139 | 1,682 | 4,554 | 1.486 |
-| 10,000 | Dijkstra | 217,850 | 4,477 | 11,767 | 1.084 |
-|  | A* | 217,850 | 2,838 | 7,534 | 2.145 |
-| 25,000 | Dijkstra | 310,906 | 11,345 | 30,094 | 3.549 |
-|  | A* | 310,906 | 7,215 | 19,226 | 6.098 |
-| 50,000 | Dijkstra | 335,127 | 20,058 | 54,455 | 5.436 |
-|  | A* | 335,127 | 8,391 | 22,886 | 5.649 |
-| 100,000 | Dijkstra | 474,785 | 57,576 | 158,145 | 17.340 |
-|  | A* | 474,785 | 20,242 | 56,713 | 15.645 |
-| 264,346 | Dijkstra | 749,853 | 144,596 | 409,324 | 107.358 |
-|  | A* | 749,853 | 57,687 | 167,194 | 114.781 |
+| 1,000 | Dijkstra | 92,050 | 596 | 1,558 | 0.058 |
+|  | A* | 92,050 | 344 | 922 | 0.177 |
+| 5,000 | Dijkstra | 177,139 | 2,532 | 6,770 | 0.414 |
+|  | A* | 177,139 | 1,682 | 4,554 | 0.813 |
+| 10,000 | Dijkstra | 217,850 | 4,477 | 11,767 | 0.858 |
+|  | A* | 217,850 | 2,838 | 7,534 | 1.558 |
+| 25,000 | Dijkstra | 310,906 | 11,345 | 30,094 | 2.881 |
+|  | A* | 310,906 | 7,215 | 19,226 | 4.633 |
+| 50,000 | Dijkstra | 335,127 | 20,058 | 54,455 | 5.763 |
+|  | A* | 335,127 | 8,391 | 22,886 | 6.706 |
+| 100,000 | Dijkstra | 474,785 | 57,576 | 158,145 | 21.190 |
+|  | A* | 474,785 | 20,242 | 56,713 | 18.008 |
+| 264,346 | Dijkstra | 749,853 | 144,596 | 409,324 | 48.543 |
+|  | A* | 749,853 | 57,687 | 167,194 | 49.508 |
 
 ![Main comparison](fig_main.png)
 
@@ -143,16 +143,16 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 | Avg degree | Edges | Algorithm | Avg vertices explored | Avg edges examined | Avg time (ms) |
 |---|---|---|---|---|---|
-| 2.58 | 12,902 | Dijkstra | 4,466 | 11,732 | 0.760 |
-|  |  | A* | 1,212 | 3,303 | 0.637 |
-| 4.00 | 20,000 | Dijkstra | 4,453 | 18,089 | 0.994 |
-|  |  | A* | 1,105 | 4,639 | 0.707 |
-| 6.00 | 30,000 | Dijkstra | 4,406 | 26,813 | 2.450 |
-|  |  | A* | 931 | 5,880 | 1.412 |
-| 8.00 | 40,000 | Dijkstra | 4,380 | 35,597 | 3.040 |
-|  |  | A* | 826 | 6,983 | 1.426 |
-| 12.00 | 60,000 | Dijkstra | 4,418 | 53,895 | 4.486 |
-|  |  | A* | 755 | 9,601 | 1.787 |
+| 2.58 | 12,902 | Dijkstra | 4,466 | 11,732 | 0.979 |
+|  |  | A* | 1,212 | 3,303 | 0.841 |
+| 4.00 | 20,000 | Dijkstra | 4,453 | 18,089 | 1.015 |
+|  |  | A* | 1,105 | 4,639 | 0.770 |
+| 6.00 | 30,000 | Dijkstra | 4,406 | 26,813 | 1.509 |
+|  |  | A* | 931 | 5,880 | 0.819 |
+| 8.00 | 40,000 | Dijkstra | 4,380 | 35,597 | 2.133 |
+|  |  | A* | 826 | 6,983 | 1.129 |
+| 12.00 | 60,000 | Dijkstra | 4,418 | 53,895 | 3.041 |
+|  |  | A* | 755 | 9,601 | 1.439 |
 
 ![Density experiment](fig_density.png)
 
@@ -165,9 +165,9 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 **Q4. Which explores fewer vertices, and why?** A\*: 27-53% of Dijkstra's vertices (distance weights; 35-66% for travel time). Dijkstra expands every vertex whose distance from the source is below the answer, i.e. a disc around S. A\* adds h(v) to the priority, so vertices pointing away from D are postponed and the search stretches toward D. The saving is smaller than the ideal because the heuristic is a straight-line bound scaled by the *minimum* weight/length ratio (9.64 on small graphs, 7.15 on the larger ones), while typical edges have a ratio near 10, so h underestimates the remaining cost. The saving shrinks from about 73% fewer vertices at 10,000 vertices to 47% at 25,000, which coincides with the drop of `c` (a plausible cause, though graph size changes at the same time). With travel-time weights A\* explores 58-66% of Dijkstra's vertices up to 25,000 vertices but 35-42% from 50,000 vertices upward, so its benefit relative to distance weights is not uniform; it depends on the region and on the heuristic scale.
 
-**Q5. How does execution time vary with graph size?** Dijkstra grows from 0.065 ms (1,000 vertices) to 95.3 ms (264,346 vertices); A\* from 0.137 ms to 96.7 ms. A log-log fit gives slopes of 1.22 (Dijkstra) and 1.15 (A\*): time grows somewhat faster than the number of vertices. With random endpoints the typical source-destination distance grows with the graph, so the explored region grows about in proportion to V (602 to 140,744 vertices for Dijkstra); the extra growth comes from the log factor of the heap and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). A\* explores fewer vertices at every size, but its execution time is 101% of Dijkstra's at full size (ratios range from 79% to 209% across sizes), plausibly because each A\* vertex also costs a haversine evaluation (sin, asin, sqrt) that cancels out the saving in vertices on this machine.
+**Q5. How does execution time vary with graph size?** Dijkstra grows from 0.245 ms (1,000 vertices) to 44.2 ms (264,346 vertices); A\* from 0.464 ms to 49.0 ms. A log-log fit gives slopes of 0.99 (Dijkstra) and 0.95 (A\*): time grows somewhat faster than the number of vertices. With random endpoints the typical source-destination distance grows with the graph, so the explored region grows about in proportion to V (602 to 140,744 vertices for Dijkstra); the extra growth comes from the log factor of the heap and, most likely, from cache misses as the arrays outgrow the CPU caches (not measured separately here). A\* explores fewer vertices at every size, but its execution time is 111% of Dijkstra's at full size (ratios range from 90% to 190% across sizes), plausibly because each A\* vertex also costs a haversine evaluation (sin, asin, sqrt) that cancels out the saving in vertices on this machine.
 
-**Q6. Effect of graph density.** Real road networks are sparse (average degree 2.6-2.8), so E = O(V) and the (V+E) log V bound is dominated by V log V. To isolate density, I added synthetic *local* shortcut edges (endpoints a few hops apart, weight about 10x great-circle length, like real edges) to the 10,000-vertex graph, raising the average degree from 2.58 to 12. Edges examined by Dijkstra rose from 11,732 to 53,895 (4.6x) and its time from 0.76 to 4.49 ms (5.9x), while vertices explored stayed nearly constant (4,466 to 4,418). So density affects the cost mainly through the number of edge relaxations (and heap pushes), roughly proportionally to degree; A\* shows the same pattern (3,303 to 9,601 edges) but from a much lower base. Caveat: the added edges are synthetic and slightly shorten routes (average cost falls from 100,238 to 86,257).
+**Q6. Effect of graph density.** Real road networks are sparse (average degree 2.6-2.8), so E = O(V) and the (V+E) log V bound is dominated by V log V. To isolate density, I added synthetic *local* shortcut edges (endpoints a few hops apart, weight about 10x great-circle length, like real edges) to the 10,000-vertex graph, raising the average degree from 2.58 to 12. Edges examined by Dijkstra rose from 11,732 to 53,895 (4.6x) and its time from 0.98 to 3.04 ms (3.1x), while vertices explored stayed nearly constant (4,466 to 4,418). So density affects the cost mainly through the number of edge relaxations (and heap pushes), roughly proportionally to degree; A\* shows the same pattern (3,303 to 9,601 edges) but from a much lower base. Caveat: the added edges are synthetic and slightly shorten routes (average cost falls from 100,238 to 86,257).
 
 **Q7. Theoretical time complexity of the Dijkstra implementation.** O((V + E) log V) with a binary heap and lazy deletion (at most E heap entries; each operation O(log E) = O(log V)); O(V log V) on sparse road graphs where E = O(V). Space O(V + E).
 
@@ -175,30 +175,7 @@ Unreachable pairs make both algorithms exhaust the source's component and return
 
 **Q9. Difficulties converting the dataset.** (1) The `.gr` files are *directed arcs*; I had to verify symmetry (0 exceptions) and merge pairs into undirected edges. (2) 3,746 repeated arcs between the same intersections needed a merge rule (keep the minimum). (3) The weight unit is undocumented; I measured weight/great-circle ratios (about 10) to design a valid heuristic. A raw haversine in metres would still be admissible but far too weak, and a naive 'weight = metres' assumption would have been wrong. (4) Coordinates are integer micro-degrees. (5) Subgraphs must be connected and comparable: BFS prefixes give nested connected graphs, but boundary effects lower their average degree. (6) A single outlier edge can reduce the global scale `c` (it fell from 9.6 to 7.2), weakening A\* on larger graphs. (7) Per-query array initialisation would otherwise dominate small queries, so version stamps are used. (8) Building very dense variants with purely local edges saturates (a degree-20 variant could not be generated), so the density experiment stops at degree 12. (9) Sub-millisecond timings are noisy, so each query is repeated until at least 50 ms have elapsed (and at least 5 runs) and the mean per run is used.
 
-**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\*** for point-to-point queries: identical optimal routes, about 47-73% fewer vertices and 47-72% fewer edges, while execution time is mixed on this machine (A*/Dijkstra time ratio from 0.79 to 2.09), with no preprocessing other than one pass to compute `c`, and it adapts to changing edge costs as long as h stays a lower bound (see the bonus). Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the heuristic's assumption. A\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or hierarchical methods such as contraction hierarchies, since plain A\* still visits tens of thousands of vertices on a city-scale graph.
-
-## Bonus: dynamic edge costs
-Cost model: **w(u,v) = alpha * d(u,v) + beta * c(u,v)** with alpha = 1, beta = 1, where d is the distance weight and c >= 0 is a congestion/delay term in the same units. Graph: 25,000-vertex subgraph; query: the longest-route pair among the 30 test pairs (vertex 20370 to 15844); original route cost **395,432**, 330 hops. Congestion is applied in two ways: a *hotspot* (c = S * d on the 131 edges in the middle 40% of the original route) and *background* noise (c = U(0,1) * d on 20% of all edges, 6,516 edges). Both algorithms re-ran from scratch with the new weights (the A\* scale `c` is recomputed from them, so h stays admissible).
-
-| Scenario | Background | Old route's cost under new weights | New optimal cost (Dijkstra) | A* cost | Route | Hops | Vertices shared with old route | Vertices explored (Dijkstra / A*) |
-|---|---|---|---|---|---|---|---|---|
-| A background only | yes | 428,479 | 416,006 | same | changed | 343 | 256 of 331 | 23,016 / 20,943 |
-| B hotspot x0.005 | no | 396,070 | 396,070 | same | unchanged | 330 | 331 of 331 | 23,076 / 21,061 |
-| C hotspot x0.02 | no | 397,983 | 396,536 | same | changed | 336 | 87 of 331 | 23,076 / 21,075 |
-| D hotspot x0.5 | no | 459,216 | 396,536 | same | changed | 336 | 87 of 331 | 23,072 / 21,063 |
-| E hotspot x10 | no | 1,671,102 | 396,536 | same | changed | 336 | 87 of 331 | 23,072 / 21,063 |
-| F hotspot x10 plus background | yes | 1,704,149 | 422,066 | same | changed | 306 | 138 of 331 | 23,049 / 21,255 |
-
-![Route comparison](fig_bonus_map.png)
-
-**Observations.**
-
-- *Below a threshold, nothing changes.* With a tiny hotspot (S = 0.005) the original route stays optimal; its cost rises only to 396,070.
-- *Above it, the route detours.* With S = 0.02 the optimal route switches to a different set of streets (336 hops instead of 330), shares 87 of 331 vertices with the old route, and costs 396,536 instead of 397,983 for staying on the old route.
-- *Severity saturates.* From S = 0.02 up to S = 10 the detour is the same (396,536), because the cheapest alternative only costs 1,104 (0.28%) more than the original, while staying would cost 1,671,102. A dense road grid offers near-equal parallel streets, so a modest local detour absorbs even heavy congestion.
-- *Network-wide noise changes the route differently.* Background congestion on 20% of all edges raises costs everywhere, so the best route reshuffles around many small delays rather than one bottleneck.
-- *A\* gains little in this bonus query:* it explores 21,075 vs 23,076 vertices, because this pair spans almost the whole 25,000-vertex graph (the longest of the 30 pairs).
-- *Both algorithms stay exact:* every scenario gives equal Dijkstra and A* costs; ignoring congestion and driving the old route would cost far more in the heavy cases.
+**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\*** for point-to-point queries: identical optimal routes, about 47-73% fewer vertices and 47-72% fewer edges, while execution time is mixed on this machine (A*/Dijkstra time ratio from 0.90 to 1.90), with no preprocessing other than one pass to compute `c`. Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the heuristic's assumption. A\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or hierarchical methods such as contraction hierarchies, since plain A\* still visits tens of thousands of vertices on a city-scale graph.
 
 ## Reproducibility
 `./run_all.sh` runs: `Preprocessing.py` (graph files) -> `g++ -O2 Algorithms.cpp` -> `experiments.py` (all runs) -> `Analysis.py` (this report). Seeds are fixed (42); timings vary slightly between machines, all other numbers are deterministic.

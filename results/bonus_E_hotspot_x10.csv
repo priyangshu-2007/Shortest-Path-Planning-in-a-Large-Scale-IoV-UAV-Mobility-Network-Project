@@ -1,3 +1,0 @@
-algo,s,d,cost,reachable,hops,vertices,edges,time_ms
-Dijkstra,20370,15844,396536,1,336,23072,61079,6.52975
-A*,20370,15844,396536,1,336,21063,55605,21.1764

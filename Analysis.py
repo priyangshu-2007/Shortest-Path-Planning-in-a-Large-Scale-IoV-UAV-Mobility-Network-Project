@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Analysis.py -- Part E tables + plots, Part F answers, bonus analysis, and the consolidated report.
+Analysis.py -- Part E tables + plots, Part F answers, and the consolidated report.
 
 Inputs : processed/dataset_info.json, results/*.csv, results/*_paths.txt, results/run_meta.json
 Outputs: results/all_results.csv, results/summary_table.csv, results/fig_*.png,
@@ -10,7 +10,6 @@ import base64, csv, json, math, os, re, statistics as st
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
 import numpy as np
 import markdown
 
@@ -163,19 +162,28 @@ def ratio(a, b):
 
 
 def fig_ratio():
-    fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+    fig, ax = plt.subplots(2, 3, figsize=(16, 8), sharex="col")
+    metrics = (("vertices", "Vertices explored", "blue", "o"),
+               ("edges", "Edges examined", "orange", "s"),
+               ("time", "Execution time", "green", "^"))
     for k, (mode, name) in enumerate((("d", "distance weights"), ("t", "travel-time weights"))):
-        plotted_ratios = []
-        for key, lab, mk in (("vertices", "vertices explored", "o"), ("edges", "edges examined", "s"),
-                             ("time", "execution time", "^")):
+        for column, (key, metric, color, marker) in enumerate(metrics):
             values = [ratio(agg[mode][n]["A*"][key], agg[mode][n]["Dijkstra"][key]) for n in SIZES]
-            plotted_ratios.extend(value for value in values if not math.isnan(value))
-            ax[k].plot(SIZES, values, mk + "-", label=lab)
-        top = max(plotted_ratios, default=0.0)
-        ax[k].set_xscale("log"); ax[k].set_ylim(0, max(1.1, top * 1.1)); ax[k].axhline(1, color="gray", lw=.8, ls="--")
-        ax[k].set_xlabel("graph size (vertices)"); ax[k].set_ylabel("A* / Dijkstra")
-        ax[k].set_title(f"A* / Dijkstra ({name}; >1: A* slower)"); ax[k].grid(True, alpha=.3)
-    ax[0].legend()
+            panel = ax[k, column]
+            panel.plot(SIZES, values, color=color, marker=marker, linestyle="-")
+            for size, value in zip(SIZES, values):
+                if not math.isnan(value):
+                    panel.annotate(f"{value:.2f}", (size, value), textcoords="offset points",
+                                   xytext=(0, 5), ha="center")
+            top = max((value for value in values if not math.isnan(value)), default=0.0)
+            panel.set_xscale("log")
+            panel.set_ylim(0, max(1.1, top * 1.1))
+            panel.axhline(1, color="gray", lw=.8, ls="--")
+            panel.set_xlabel("graph size (vertices)")
+            panel.set_ylabel("A* / Dijkstra")
+            note = "; (>1: A* slower)" if key == "time" else ""
+            panel.set_title(f"{metric}: A*/Dijkstra ({name}){note}")
+            panel.grid(True, alpha=.3)
     savefig("fig_ratio.png")
 
 
@@ -202,28 +210,6 @@ def fig_density(dt):
             ax[k].set_xlabel("average degree (10,000-vertex graph)"); ax[k].set_title(t); ax[k].grid(True, alpha=.3)
     ax[0].legend(); ax[0].set_ylim(bottom=0); ax[1].set_ylim(bottom=0); ax[2].set_ylim(bottom=0)
     savefig("fig_density.png")
-
-
-def fig_bonus():
-    b = meta["bonus"]
-    _, xy, edges = read_graph(f"graph_{b['size']}")
-    segs = [[xy[u], xy[v]] for u, v, _, _ in edges]
-    fig, ax = plt.subplots(figsize=(7.5, 7.5))
-    ax.add_collection(LineCollection(segs, colors="#cccccc", linewidths=.4))
-    def draw(path, col, lab, lw):
-        ax.plot([xy[v][0] for v in path], [xy[v][1] for v in path], color=col, lw=lw, label=lab)
-    sc = {s["name"]: s for s in b["scenarios"]}
-    draw(b["old_path"], "#1f77b4", f"original route (cost {fmt(b['old_cost'])})", 3.2)
-    draw(sc["C_hotspot_x0.02"]["new_path"], "#2ca02c",
-         f"hotspot x0.02 (cost {fmt(sc['C_hotspot_x0.02']['rows']['Dijkstra']['cost'])})", 2.2)
-    draw(sc["F_hotspot_x10_plus_background"]["new_path"], "#d62728",
-         f"hotspot x10 + background (cost {fmt(sc['F_hotspot_x10_plus_background']['rows']['Dijkstra']['cost'])})", 2.2)
-    s, d = b["old_path"][0], b["old_path"][-1]
-    ax.plot(*xy[s], "k*", ms=14, label="source"); ax.plot(*xy[d], "kD", ms=8, label="destination")
-    ax.autoscale(); ax.set_aspect("equal"); ax.legend(loc="best", fontsize=8)
-    ax.set_xlabel("longitude"); ax.set_ylabel("latitude")
-    ax.set_title(f"Dynamic costs: route change on the {fmt(b['size'])}-vertex graph")
-    savefig("fig_bonus_map.png")
 
 
 # --------------------------------------------------------------------------- 4. report
@@ -255,7 +241,6 @@ def build_report(ver):
     ex_path_a = [orig[v] for v in read_paths("size_1000_d")[1][4]]
     scales = {n: gs[f"size_{n}_d"]["heuristic_scale"] for n in SIZES}
     scales_t = {n: gs[f"size_{n}_t"]["heuristic_scale"] for n in SIZES}
-    b = meta["bonus"]
     ncmp = ver["queries"]
 
     L = []
@@ -489,48 +474,11 @@ def build_report(ver):
                            f"{min(tr.values()):.2f} to {max(tr.values()):.2f})")
     A(f"**Q10. Recommendation for large-scale IoV/UAV route planning.** **A\\*** for point-to-point queries: identical optimal routes, "
       f"{q10_performance}, with no preprocessing "
-      "other than one pass to compute `c`, and it adapts to changing edge costs as long as h stays a lower bound (see the bonus). "
+      "other than one pass to compute `c`. "
       "Dijkstra remains preferable when no coordinates exist, when one source needs routes to many destinations, or when edge costs can drop below the "
       "heuristic's assumption. A\\* pays off most when the heuristic is cheap to evaluate, for example a precomputed or simpler lower bound. "
       "For a production system with millions of queries, the next step would be a stronger heuristic (landmarks/ALT) or "
       "hierarchical methods such as contraction hierarchies, since plain A\\* still visits tens of thousands of vertices on a city-scale graph.\n")
-
-    # ---------------- Bonus
-    A("## Bonus: dynamic edge costs")
-    A(f"Cost model: **w(u,v) = alpha * d(u,v) + beta * c(u,v)** with alpha = {b['alpha']:g}, beta = {b['beta']:g}, where d is the distance weight and c >= 0 is a "
-      f"congestion/delay term in the same units. Graph: {fmt(b['size'])}-vertex subgraph; query: the longest-route pair among the 30 test pairs "
-      f"(vertex {b['s']} to {b['d']}); original route cost **{fmt(b['old_cost'])}**, {len(b['old_path'])-1} hops. Congestion is applied in two ways: "
-      f"a *hotspot* (c = S * d on the {b['hotspot_edges']} edges in the middle 40% of the original route) and *background* noise (c = U(0,1) * d on 20% of all edges, "
-      f"{fmt(b['background_edges'])} edges). Both algorithms re-ran from scratch with the new weights (the A\\* scale `c` is recomputed from them, so h stays admissible).\n")
-    old = set(b["old_path"])
-    rows = []
-    for sc in b["scenarios"]:
-        r = sc["rows"]
-        new = set(sc["new_path"])
-        same = sc["new_path"] == b["old_path"]
-        rows.append([sc["name"].replace("_", " "), "yes" if sc["background"] else "no",
-                     f"{fmt(sc['stale_cost'])}", f"{fmt(r['Dijkstra']['cost'])}",
-                     "same" if abs(r["Dijkstra"]["cost"] - r["A*"]["cost"]) < 1e-6 else "DIFFERENT",
-                     "unchanged" if same else "changed", int(r["Dijkstra"]["hops"]),
-                     f"{len(old & new)} of {len(old)}",
-                     f"{fmt(r['Dijkstra']['vertices'])} / {fmt(r['A*']['vertices'])}"])
-    A(md_table(["Scenario", "Background", "Old route's cost under new weights", "New optimal cost (Dijkstra)",
-                "A* cost", "Route", "Hops", "Vertices shared with old route", "Vertices explored (Dijkstra / A*)"], rows))
-    A("\n![Route comparison](fig_bonus_map.png)\n")
-    sc = {s["name"]: s for s in b["scenarios"]}
-    B_, Cc, Ee = sc["B_hotspot_x0.005"], sc["C_hotspot_x0.02"], sc["E_hotspot_x10"]
-    A("**Observations.**\n")
-    A(f"- *Below a threshold, nothing changes.* With a tiny hotspot (S = 0.005) the original route stays optimal; its cost rises only to {fmt(B_['rows']['Dijkstra']['cost'])}.")
-    A(f"- *Above it, the route detours.* With S = 0.02 the optimal route switches to a different set of streets ({len(Cc['new_path'])-1} hops instead of "
-      f"{len(b['old_path'])-1}), shares {len(old & set(Cc['new_path']))} of {len(old)} vertices with the old route, and costs {fmt(Cc['rows']['Dijkstra']['cost'])} "
-      f"instead of {fmt(Cc['stale_cost'])} for staying on the old route.")
-    A(f"- *Severity saturates.* From S = 0.02 up to S = 10 the detour is the same ({fmt(Ee['rows']['Dijkstra']['cost'])}), because the cheapest alternative "
-      f"only costs {fmt(Ee['rows']['Dijkstra']['cost']-b['old_cost'])} ({(Ee['rows']['Dijkstra']['cost']/b['old_cost']-1)*100:.2f}%) more than the original, "
-      f"while staying would cost {fmt(Ee['stale_cost'])}. A dense road grid offers near-equal parallel streets, so a modest local detour absorbs even heavy congestion.")
-    A("- *Network-wide noise changes the route differently.* Background congestion on 20% of all edges raises costs everywhere, so the best route "
-      "reshuffles around many small delays rather than one bottleneck.")
-    A(f"- *A\\* gains little in this bonus query:* it explores {fmt(sc['C_hotspot_x0.02']['rows']['A*']['vertices'])} vs {fmt(sc['C_hotspot_x0.02']['rows']['Dijkstra']['vertices'])} vertices, because this pair spans almost the whole {fmt(b['size'])}-vertex graph (the longest of the 30 pairs).")
-    A("- *Both algorithms stay exact:* every scenario gives equal Dijkstra and A* costs; ignoring congestion and driving the old route would cost far more in the heavy cases.\n")
 
     A("## Reproducibility")
     A("`./run_all.sh` runs: `Preprocessing.py` (graph files) -> `g++ -O2 Algorithms.cpp` -> `experiments.py` (all runs) -> `Analysis.py` (this report). Seeds are fixed (42); "
@@ -568,7 +516,7 @@ if __name__ == "__main__":
     ver = verify()
     print("verification:", ver)
     write_csvs()
-    fig_main(); fig_ratio(); fig_density(density_table()); fig_bonus()
+    fig_main(); fig_ratio(); fig_density(density_table())
     md_text = build_report(ver)
     open(f"{RES}/report.md", "w", encoding="utf-8").write(md_text)
     open(f"{RES}/report.html", "w", encoding="utf-8").write(to_html(md_text))
