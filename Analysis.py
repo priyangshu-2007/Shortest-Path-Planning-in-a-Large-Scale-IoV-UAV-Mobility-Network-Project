@@ -240,7 +240,6 @@ def build_report(ver):
     ex_path = [orig[v] for v in pth[4]]
     ex_path_a = [orig[v] for v in read_paths("size_1000_d")[1][4]]
     scales = {n: gs[f"size_{n}_d"]["heuristic_scale"] for n in SIZES}
-    scales_t = {n: gs[f"size_{n}_t"]["heuristic_scale"] for n in SIZES}
     ncmp = ver["queries"]
 
     L = []

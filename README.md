@@ -1,60 +1,61 @@
-<<<<<<< HEAD
-# Shortest-path planning on a large road network (Dijkstra vs A*)
+# Shortest-Path Planning on a Large-Scale Road Network (Dijkstra vs A*)
 
-Python does the preprocessing, experiment driving and analysis; C++ implements the algorithms.
+Dijkstra's algorithm and A* implemented from scratch in C++ and compared on a real road network
+(9th DIMACS Challenge, New York: 264,346 vertices, 365,050 undirected weighted edges).
+Python handles preprocessing, experiment driving and analysis.
 
 ## Dataset
-9th DIMACS Implementation Challenge (Shortest Paths), USA road network, New York City
-(264,346 nodes, 733,846 arcs). Public domain; originally US Census TIGER/Line data.
+9th DIMACS Implementation Challenge (Shortest Paths), USA road network, New York City.
+Public domain; originally US Census TIGER/Line data.
 Download page: http://www.diag.uniroma1.it/challenge9/download.shtml
 
-Put the three files in `data/` with these names:
+Put the three files in the `Data/` folder with these names:
 
-| File in `data/` | DIMACS file |
+| File in `Data/` | DIMACS file |
 |---|---|
 | `Distance.gz`    | `USA-road-d.NY.gr.gz` (distance weights) |
 | `Travel_Time.gz` | `USA-road-t.NY.gr.gz` (travel-time weights) |
-| `Coordinates.gz` | `USA-road-d.NY.co.gz` (lon/lat in micro-degrees) |
+| `Coordinates.gz` | `USA-road-d.NY.co.gz` (longitude/latitude in micro-degrees) |
 
 ## Requirements
-Python 3.8+ with `matplotlib`, `numpy`, `markdown` (`pip install matplotlib numpy markdown`) and `g++` with C++17 support.
+- Python 3.8+ with `matplotlib`, `numpy`, `markdown`: `pip install matplotlib numpy markdown`
+- `g++` with C++17 support (MinGW-w64 or MSYS2 on Windows), available on the PATH
 
-## Run everything
-```
-./run_all.sh
-```
-The project automatically resolves the correct file and directory names on case-sensitive filesystems (for example `Preprocessing.py`/`Data` instead of lowercase variants).
+## How to run (Windows, from the project folder)
+Run the three steps in this order:
 
-or step by step:
 ```
-python3 Preprocessing.py       # Parts A,B   -> processed/ (graph files, queries, dataset_info.json)
-g++ -O2 -std=c++17 -Wall -o sp Algorithms.cpp # Parts C,D -> ./sp (Dijkstra + A*)
-python3 experiments.py         # Part E -> results/*.csv, *_paths.txt, run_meta.json
-python3 Analysis.py            # Part F      -> results/report.html, report.md, fig_*.png, all_results.csv
+python Preprocessing.py
+python experiments.py
+python Analysis.py
+start results\report.html
 ```
-Preprocessing takes about a minute; the experiments about a minute; analysis a few seconds.
+
+- If `python` is not recognised, use `py` instead.
+- `Preprocessing.py` needs to run only once (about a minute); `experiments.py` takes a few minutes; `Analysis.py` a few seconds.
+- `experiments.py` compiles `Algorithms.cpp` to `Algorithms.exe` by itself.
+- Linux/macOS/Git Bash users can run everything with `./run_all.sh`.
 
 ## Files
 | File | Role |
 |---|---|
-| `preprocess.py` | Reads the DIMACS files, merges arcs into undirected edges, checks connectivity, builds nested BFS subgraphs (1K-264K vertices), query pairs, density variants, disconnected test graph |
-| `sp.cpp` | Adjacency-list graph, Dijkstra (min-priority queue), A* (scaled haversine heuristic), explicit path reconstruction, metrics and timing |
-| `experiments.py` | Compiles and runs `sp` on all sizes and weight models, density experiment and disconnected test |
-| `analysis.py` | Verifies results (equal costs, valid paths), builds tables, plots, Part F answers and the single report |
-| `results/report.html` / `report.md` | The complete report (Parts A-F) |
-| `results/all_results.csv` | Every query: size, weights, algorithm, cost, hops, vertices explored, edges examined, time |
-| `results/summary_table.csv` | Averages per size and algorithm |
+| `Preprocessing.py` | Reads the DIMACS files, merges opposite arcs into undirected edges, checks connectivity, builds nested connected BFS subgraphs (1,000 to 264,346 vertices), query pairs, density variants and a disconnected test graph |
+| `Algorithms.cpp` | Adjacency-list graph, Dijkstra (min-priority queue), A* (scaled haversine heuristic), explicit path reconstruction, metrics and timing |
+| `experiments.py` | Compiles and runs the C++ program on all sizes and both weight models, the density experiment and the disconnected-pair test |
+| `Analysis.py` | Verifies results (equal costs, valid paths), builds tables, plots, the Part F answers and the report |
+| `results/report.html`, `results/report.md` | The complete report |
+| `results/all_results.csv`, `results/summary_table.csv` | Per-query results and per-size averages |
+| `results/fig_main.png`, `fig_ratio.png`, `fig_density.png` | Plots comparing the algorithms |
 
 ## Reproducibility
-All randomness uses fixed seeds (42). Costs, vertices explored and edges examined are deterministic; execution times vary slightly by machine.
-Time per query is the mean per run, at least 5 runs and at least 50 ms in total. *Vertices explored* = vertices finalised (destination included); *edges examined* = adjacency entries scanned from finalised vertices.
+All randomness uses fixed seeds (42). Costs, vertices explored and edges examined are deterministic;
+execution times vary slightly between machines.
+Each query is repeated at least 5 times and for at least 50 ms in total, and the mean time per run is reported.
+*Vertices explored* = vertices finalised (destination included); *edges examined* = adjacency entries
+scanned from finalised vertices.
 
-## Command-line use of the solver
+## Using the compiled solver directly
 ```
-./sp --graph processed/graph_1000.txt --queries processed/queries_1000.txt --mode d --out out.csv --paths paths.txt --reps 5
+Algorithms --graph processed/graph_1000.txt --queries processed/queries_1000.txt --mode d --out out.csv --paths paths.txt --reps 5
 ```
-`--mode d` selects distance weights and `--mode t` selects travel-time weights.
-=======
-# Shortest-Path-Planning-in-a-Large-Scale-IoV-UAV-Mobility-Network-Project
-Compares Dijkstra and A* shortest-path algorithms on a real New York road network (264K intersections, 365K roads), testing graph size, density and unreachable routes. Both find identical optimal routes, while A* explores only about 27–53% of the vertices, making it better for large-scale route planning.
->>>>>>> 9e1dd873c047bdd888d5eacb863e7607b94c7ad1
+`--mode d` uses distance weights and `--mode t` uses travel-time weights.
